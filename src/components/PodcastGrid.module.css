@@ -1,0 +1,24 @@
+.podcastLink {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+  transition: transform 0.2s ease-in-out;
+}
+
+.podcastLink:hover {
+  transform: translateY(-2px);
+}
+
+.grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  padding: 1rem;
+}
+
+.noResults {
+  padding: 2rem;
+  text-align: center;
+  font-style: italic;
+  color: #888;
+}
