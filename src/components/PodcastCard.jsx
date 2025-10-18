@@ -22,6 +22,7 @@ export default function PodcastCard({ podcast, genres }) {
     return (
       <span key={id} className={styles.tag}>
         {match ? match.title : `Unknown (${id})`}
+
       </span>
     );
   });

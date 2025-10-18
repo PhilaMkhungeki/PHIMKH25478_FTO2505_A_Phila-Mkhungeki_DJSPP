@@ -1,8 +1,13 @@
 import { useEffect, useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { PodcastProvider } from "./context/PodcastContext";
+import { AudioProvider } from "./context/AudioContext";
+import { FavouritesProvider } from "./context/FavouritesContext";
+import { ThemeProvider } from "./context/ThemeContext";
 import { fetchPodcasts } from "./api/fetchPodcasts";
 import { genres } from "./data";
+
+// Components
 import Header from "./components/Header";
 import SearchBar from "./components/SearchBar";
 import SortSelect from "./components/SortSelect";
@@ -10,12 +15,15 @@ import GenreFilter from "./components/GenreFilter";
 import PodcastGrid from "./components/PodcastGrid";
 import Pagination from "./components/Pagination";
 import ShowDetail from "./components/ShowDetail";
+import FavouritesPage from "./components/FavouritePage";
+import AudioPlayer from "./components/AudioPlayer";
+import RecommendedCarousel from "./components/RecommendedCarousel";
+import ThemeToggle from "./components/ThemeToggle";
+
+// Styles
+import "./components/Themes.css";
 import styles from "./App.module.css";
 
-/**
- * Root component of the Podcast Explorer app.
- * Handles data fetching and layout composition.
- */
 function AppContent() {
   const [podcasts, setPodcasts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -28,12 +36,14 @@ function AppContent() {
   return (
     <>
       <Header />
+      <ThemeToggle />
       
       <Routes>
-        {/* Home page Route */}
         <Route path="/" element={
           <PodcastProvider initialPodcasts={podcasts}>
             <main className={styles.main}>
+              <RecommendedCarousel />
+              
               <section className={styles.controls}>
                 <SearchBar />
                 <GenreFilter genres={genres} />
@@ -65,17 +75,25 @@ function AppContent() {
           </PodcastProvider>
         } />
         
-        {/* Show Detail Route */}
         <Route path="/show/:showId" element={<ShowDetail />} />
+        <Route path="/favourites" element={<FavouritesPage />} />
       </Routes>
+
+      <AudioPlayer />
     </>
   );
 }
 
 export default function App() {
   return (
-    <Router>
-      <AppContent />
-    </Router>
+    <ThemeProvider>
+      <FavouritesProvider>
+        <AudioProvider>
+          <Router>
+            <AppContent />
+          </Router>
+        </AudioProvider>
+      </FavouritesProvider>
+    </ThemeProvider>
   );
 }
