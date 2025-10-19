@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { usePodcast } from '../context/PodcastContext';
-/*import styles from './Carousel.module.css';*/
+import styles from './RecommendedCarousel.module.css';
 
 const RecommendedCarousel = () => {
   const { podcasts } = usePodcast();
@@ -30,7 +30,7 @@ const RecommendedCarousel = () => {
 
   return (
     <section className={styles.carouselSection}>
-      <h2 className={styles.carouselTitle}>Recommended For You</h2>
+      <h2 className={styles.carouselTitle}>Recommended Shows</h2>
       <div className={styles.carouselContainer}>
         <button onClick={prevSlide} className={styles.carouselButton}>
           ‹
@@ -58,9 +58,7 @@ const RecommendedCarousel = () => {
                         </span>
                       ))}
                     </div>
-                    <p className={styles.carouselSeasons}>
-                      {show.seasons} seasons
-                    </p>
+
                   </div>
                 </Link>
               </div>

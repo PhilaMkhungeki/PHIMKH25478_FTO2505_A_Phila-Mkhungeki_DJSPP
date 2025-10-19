@@ -1,5 +1,6 @@
 import { formatDate } from "../utils/formatDate";
 import styles from "./PodcastCard.module.css";
+import {useFavourites} from '../context/FavouritesContext';
 
 /**
  * Renders a single podcast preview card with image, title, number of seasons,
@@ -17,6 +18,8 @@ import styles from "./PodcastCard.module.css";
  * @returns {JSX.Element} The rendered podcast card component.
  */
 export default function PodcastCard({ podcast, genres }) {
+  const { favourites, isFavourite } = useFavourites();
+
   const genreSpans = podcast.genres.map((id) => {
     const match = genres.find((genre) => genre.id === id);
     return (
@@ -27,16 +30,28 @@ export default function PodcastCard({ podcast, genres }) {
     );
   });
 
+  // check if any episodes from this podcast are favourited
+  const hasFavouritedEpisodes = favourites.some(fav => fav.showTitle === podcast.title);
+
   return (
     <div className={styles.card}>
-      <img src={podcast.image} alt={podcast.title} />
-
-      <h3>{podcast.title}</h3>
-      <p className={styles.seasons}>{podcast.seasons} seasons</p>
-      <div className={styles.tags}>{genreSpans}</div>
-      <p className={styles.updatedText}>
-        Updated {formatDate(podcast.updated)}
-      </p>
+      <div className={styles.imageContainer}>
+          <img src={podcast.image} alt={podcast.title} />
+          {/* Show heart indicator if podcast has favourited episodes */}
+          {hasFavouritedEpisodes && (
+            <div className={styles.favouriteIndicator} title="Has favourited episodes">
+              ❤️
+            </div>
+          )}
+      </div>   
+      <div className={styles.content}>
+          <h3>{podcast.title}</h3>
+          <p className={styles.seasons}>{podcast.seasons} seasons</p>
+          <div className={styles.tags}>{genreSpans}</div>
+          <p className={styles.updatedText}>
+            Updated {formatDate(podcast.updated)}
+          </p>
+      </div>    
     </div>
   );
 }

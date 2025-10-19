@@ -1,5 +1,5 @@
 import React from 'react';
-import { useFavourites } from '../../context/FavouritesContext';
+import { useFavourites } from '../context/FavouritesContext';
 import styles from './FavouriteButton.module.css';
 
 const FavouriteButton = ({ episode, showTitle, seasonTitle }) => {
@@ -19,7 +19,6 @@ const FavouriteButton = ({ episode, showTitle, seasonTitle }) => {
     };
 
     if (isFavourite(episode.id)) {
-      // Find the favourite ID to remove
       const favourites = JSON.parse(localStorage.getItem('podcast-favourites') || '[]');
       const favouriteToRemove = favourites.find(fav => fav.episodeId === episode.id);
       if (favouriteToRemove) {

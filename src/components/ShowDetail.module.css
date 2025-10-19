@@ -43,7 +43,7 @@
   margin: 0;
 }
 
-/* Podcast Info Section - Image floating left */
+/* Podcast Info Section */
 .podcastInfoSection {
   display: flex;
   gap: 40px;
@@ -232,6 +232,7 @@
   margin-bottom: 16px;
   background: white;
   transition: box-shadow 0.2s;
+  position: relative;
 }
 
 .episodeCard:hover {
@@ -243,6 +244,7 @@
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 12px;
+  padding-right: 50px;
 }
 
 .episodeTitle {
@@ -266,6 +268,8 @@
   margin: 0;
   font-size: 14px;
 }
+
+
 
 /* Loading and Error States */
 .loadingContainer,

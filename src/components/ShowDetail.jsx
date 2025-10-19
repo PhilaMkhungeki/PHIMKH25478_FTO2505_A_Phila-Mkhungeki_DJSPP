@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { getShowDetail } from '../api/podcastShow';
 import { formatDate } from '../utils/formatDate';
+import FavouriteButton from './FavouriteButton';
 import styles from './ShowDetail.module.css';
 
 const ShowDetail = () => {
@@ -75,9 +76,6 @@ const ShowDetail = () => {
       <nav className={styles.detailNav}>
         <Link to="/" className={styles.backLink}>← Back to All Podcasts</Link>
       </nav>
-
-      
-      
 
       {/* Podcast Info Table */}
       <div className={styles.podcastInfoTable}>
@@ -156,6 +154,11 @@ const ShowDetail = () => {
           <h2>Episodes</h2>
           {selectedSeason?.episodes?.map(episode => (
             <div key={episode.id} className={styles.episodeCard}>
+              <FavouriteButton 
+                episode={episode}
+                showTitle={show.title}
+                seasonTitle={selectedSeason.title}
+              />
               <div className={styles.episodeHeader}>
                 <h4 className={styles.episodeTitle}>{episode.title}</h4>
                 <span className={styles.episodeDuration}>{episode.duration} • {episode.releaseDate}</span>
