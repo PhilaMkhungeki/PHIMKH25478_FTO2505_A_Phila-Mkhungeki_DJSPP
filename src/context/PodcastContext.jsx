@@ -1,5 +1,5 @@
 import React, { createContext, useEffect, useState } from "react";
-
+import { useContext } from "react";
 /**
  * @typedef Podcast
  * @property {number} id - Unique identifier
@@ -136,4 +136,8 @@ export function PodcastProvider({ children, initialPodcasts }) {
   return (
     <PodcastContext.Provider value={value}>{children}</PodcastContext.Provider>
   );
+}
+
+export function usePodcast() {
+  return React.useContext(PodcastContext);
 }
