@@ -20,12 +20,11 @@ import {useFavourites} from '../context/FavouritesContext';
 export default function PodcastCard({ podcast, genres }) {
   const { favourites, isFavourite } = useFavourites();
 
-  const genreSpans = podcast.genres.map((id) => {
-    const match = genres.find((genre) => genre.id === id);
+  const genreSpans = podcast.genres.map((genreTitle) => {
+    const match = genres.find((genre) => genre.title === genreTitle);
     return (
-      <span key={id} className={styles.tag}>
-        {match ? match.title : `Unknown (${id})`}
-
+      <span key={genreTitle} className={styles.tag}>
+        {match ? match.title : `Unknown (${genreTitle})`}
       </span>
     );
   });

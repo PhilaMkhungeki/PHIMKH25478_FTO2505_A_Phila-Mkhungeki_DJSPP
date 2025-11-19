@@ -3,10 +3,12 @@ import { useParams, Link } from 'react-router-dom';
 import { getShowDetail } from '../api/podcastShow';
 import { formatDate } from '../utils/formatDate';
 import FavouriteButton from './FavouriteButton';
+import { useAudio } from '../context/AudioContext';
 import styles from './ShowDetail.module.css';
 
 const ShowDetail = () => {
   const { showId } = useParams();
+  const { dispatch } = useAudio();
   const [show, setShow] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -16,6 +18,7 @@ const ShowDetail = () => {
     const fetchShowDetail = async () => {
       try {
         setLoading(true);
+       
         const showData = await getShowDetail(showId);
         setShow(showData);
         // Set first season as default selected
@@ -35,6 +38,19 @@ const ShowDetail = () => {
 
   const handleSeasonSelect = (season) => {
     setSelectedSeason(season);
+  };
+
+  // Add play functionality for episodes
+  const handlePlayEpisode = (episode) => {
+    dispatch({
+      type: 'SET_CURRENT_TRACK',
+      payload: {
+        title: episode.title,
+        showTitle: show.title,
+        audioUrl: episode.audioUrl,
+        image: episode.image || show.image // Fallback to show image if episode has none
+      }
+    });
   };
 
   // Calculate total episodes
@@ -70,7 +86,7 @@ const ShowDetail = () => {
       </div>
     );
   }
-
+    
   return (
     <div className={styles.showDetail}>
       <nav className={styles.detailNav}>
@@ -78,42 +94,35 @@ const ShowDetail = () => {
       </nav>
 
       {/* Podcast Info Table */}
-      <div className={styles.podcastInfoTable}>
-          <div className={styles.podcastTopSection}>
-            <div className={styles.infoRow}>
-              <div className={styles.podcastImageContainer}>
-                <img src={show.image} alt={show.title} className={styles.podcastCover} />
-              </div>
-              <div className={styles.podcastHeader}>
-                <h1 className={styles.podcastTitle}>{show.title}</h1>
-                <p className={styles.podcastDescription}>{show.description}</p>
-                <div className={styles.podcastDetails}>
-                  <div className={styles.genresSection}>
-                    <span className={styles.sectionLabel}>GENRES</span>
-                    <div className={styles.genresList}>
-                      {show.genres.map((genre, index) => (
-                        <span key={genre} className={styles.genreTag}>
-                          {genre}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                  <div className={styles.updateSection}>
-                    <span className={styles.sectionLabel}>LAST UPDATED</span>
-                    <span className={styles.updateDate}>{formatDate(show.updated)}</span>
-                  </div>
-                </div>
+      <div className={styles.podcastTopSection}>
+        <div className={styles.podcastImageContainer}>
+          <img src={show.image} alt={show.title} className={styles.podcastCover} />
+        </div>
+        <div className={styles.podcastHeader}>
+          <h1 className={styles.podcastTitle}>{show.title}</h1>
+          <p className={styles.podcastDescription}>{show.description}</p>
+          <div className={styles.podcastDetails}>
+            <div className={styles.genresSection}>
+              <span className={styles.sectionLabel}>GENRES</span>
+                <div className={styles.genresList}>
+                  {show.genres.map((genre, index) => (
+                    <span key={index} className={styles.genreTag}>
+                      {genre}
+                    </span>
+                  ))}
               </div>
             </div>
+            <div className={styles.updateSection}>
+              <span className={styles.sectionLabel}>LAST UPDATED</span>
+              <span className={styles.updateDate}>{formatDate(show.updated)}</span>
+            </div>
           </div>
-
-        <div className={styles.statsContainer}>
           <div className={styles.statsRow}>
             <div className={styles.statItem}>
               <span className={styles.statLabel}>TOTAL SEASONS</span>
               <span className={styles.statValue}>{show.seasons?.length || 0} Seasons</span>
             </div>
-            <div className={styles.statItem}>
+            <div className={styles.statEpisodes}>
               <span className={styles.statLabel}>TOTAL EPISODES</span>
               <span className={styles.statValue}>{totalEpisodes} Episodes</span>
             </div>
@@ -124,48 +133,69 @@ const ShowDetail = () => {
       <div className={styles.contentSections}>
         {/* Season Navigation */}
         <div className={styles.seasonNavigationSection}>
-          <h2>Current Season</h2>
-          <div className={styles.seasonButtons}>
-            {show.seasons?.map(season => (
-              <button
-                key={season.id}
-                className={`${styles.seasonButton} ${selectedSeason?.id === season.id ? styles.active : ''}`}
-                onClick={() => handleSeasonSelect(season)}
-              >
-                {season.title}
-              </button>
-            ))}
-          </div>
+          <div className={styles.seasonsHeader}>
+            <h2>Current Season</h2>
 
-          {/* Selected Season Info */}
+            <div className={styles.seasonDropdown}>
+              <select
+                value={selectedSeason?.id || ''}
+                onChange={(e) => {
+                  const selected = show.seasons?.find(season => season.id === e.target.value);
+                  if (selected) handleSeasonSelect(selected);
+                }}
+                className={styles.seasonSelect}
+              >
+                {show.seasons?.map(season => (
+                  <option key={season.id} value={season.id}>
+                    {season.title}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>  
+        </div>
+
+        {/* Selected Season Info */}
+        <div className={styles.selectedSeasonSection}> 
           {selectedSeason && (
             <div className={styles.currentSeasonInfo}>
               <h3>{selectedSeason.title}</h3>
               <p className={styles.seasonDescription}>{selectedSeason.description}</p>
               <p className={styles.seasonMeta}>
-                {selectedSeason.episodes?.length || 0} Episodes
+                {selectedSeason.episodes?.length || 0} Episodes • Released {selectedSeason.year || '2024'}
               </p>
             </div>
           )}
-        </div>
-
-        {/* Episodes List */}
-        <div className={styles.episodesSection}>
-          <h2>Episodes</h2>
-          {selectedSeason?.episodes?.map(episode => (
-            <div key={episode.id} className={styles.episodeCard}>
-              <FavouriteButton 
-                episode={episode}
-                showTitle={show.title}
-                seasonTitle={selectedSeason.title}
-              />
-              <div className={styles.episodeHeader}>
-                <h4 className={styles.episodeTitle}>{episode.title}</h4>
-                <span className={styles.episodeDuration}>{episode.duration} • {episode.releaseDate}</span>
-              </div>
-              <p className={styles.episodeDescription}>{episode.description}</p>
+          {/* Episodes List */}
+          <div className={styles.episodesSection}>
+            <div className={styles.episodesList}>
+              {selectedSeason?.episodes?.map(episode => (
+                <div key={episode.id} className={styles.episodeCard}>
+                  <div className={styles.episodeActions}>
+                    <FavouriteButton 
+                      episode={episode}
+                      showTitle={show.title}
+                      seasonTitle={selectedSeason.title}
+                    />
+                    <button 
+                      onClick={() => handlePlayEpisode(episode)}
+                      className={styles.playButton}
+                      title="Play episode"
+                    >
+                      ▶ Play
+                    </button>
+                  </div>
+                  <div className={styles.episodeContent}>
+                    <div className={styles.episodeHeader}>
+                      <h4 className={styles.episodeTitle}>{episode.title}</h4>
+                      <span className={styles.episodeDuration}>{episode.duration} • {episode.releaseDate}</span>
+                    </div>
+                    <p className={styles.episodeDescription}>{episode.description}</p>
+                  </div>
+                </div>
+              ))}
             </div>
-          ))}
+          </div>
         </div>
       </div>
     </div>

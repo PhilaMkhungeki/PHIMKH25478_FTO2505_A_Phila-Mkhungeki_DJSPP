@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import { useAudio } from '../context/AudioContext';
-/*import styles from './AudioPlayer.module.css';*/
+import styles from './AudioPlayer.module.css';
 
 const AudioPlayer = () => {
   const { state, dispatch } = useAudio();
@@ -54,72 +54,80 @@ const AudioPlayer = () => {
   };
 
   const formatTime = (seconds) => {
+    if (!seconds || isNaN(seconds)) return '0:00';
     const mins = Math.floor(seconds / 60);
     const secs = Math.floor(seconds % 60);
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
-  if (!state.currentTrack) return null;
-
+  // Always render the container, but conditionally show content
   return (
-    <div className={styles.audioPlayer}>
+    <div className={`${styles.audioPlayer} ${!state.currentTrack ? styles.hidden : ''}`}>
       <audio
         ref={audioRef}
-        src={state.currentTrack.audioUrl}
+        src={state.currentTrack?.audioUrl}
         onTimeUpdate={handleTimeUpdate}
         onLoadedMetadata={handleLoadedMetadata}
         onEnded={() => dispatch({ type: 'PAUSE' })}
       />
       
-      <div className={styles.playerContent}>
-        <div className={styles.trackInfo}>
-          <img 
-            src={state.currentTrack.image} 
-            alt={state.currentTrack.title}
-            className={styles.trackImage}
-          />
-          <div className={styles.trackDetails}>
-            <h4 className={styles.trackTitle}>{state.currentTrack.title}</h4>
-            <p className={styles.trackShow}>{state.currentTrack.showTitle}</p>
+      {state.currentTrack && (
+        <div className={styles.playerContent}>
+          <div className={styles.trackInfo}>
+            <img 
+              src={state.currentTrack.image} 
+              alt={state.currentTrack.title}
+              className={styles.trackImage}
+            />
+            <div className={styles.trackDetails}>
+              <h4 className={styles.trackTitle}>{state.currentTrack.title}</h4>
+              <p className={styles.trackShow}>{state.currentTrack.showTitle}</p>
+            </div>
           </div>
-        </div>
 
-        <div className={styles.controls}>
-          <button onClick={handlePlayPause} className={styles.controlButton}>
-            {state.isPlaying ? '⏸️' : '▶️'}
-          </button>
-          
-          <div className={styles.progressSection}>
-            <span className={styles.time}>{formatTime(state.progress)}</span>
+          <div className={styles.controls}>
+            <button onClick={handlePlayPause} className={styles.controlButton}>
+              {state.isPlaying ? '⏸️' : '▶️'}
+            </button>
+            
+            <div className={styles.progressSection}>
+              <span className={styles.time}>{formatTime(state.progress)}</span>
+              <input
+                type="range"
+                min="0"
+                max={state.duration || 100}
+                value={state.progress}
+                onChange={handleProgressChange}
+                className={styles.progressBar}
+                style={{
+                  '--progress-percent': state.duration ? `${(state.progress / state.duration) * 100}%` : '0%'
+                }}
+              />
+              <span className={styles.time}>{formatTime(state.duration)}</span>
+            </div>
+          </div>
+
+          <div className={styles.volumeSection}>
             <input
               type="range"
               min="0"
-              max={state.duration || 100}
-              value={state.progress}
-              onChange={handleProgressChange}
-              className={styles.progressBar}
+              max="1"
+              step="0.1"
+              value={state.volume}
+              onChange={(e) => {
+                dispatch({ type: 'SET_VOLUME', payload: parseFloat(e.target.value) });
+                if (audioRef.current) {
+                  audioRef.current.volume = parseFloat(e.target.value);
+                }
+              }}
+              className={styles.volumeSlider}
+              style={{
+                '--volume-percent': `${state.volume * 100}%`
+              }}
             />
-            <span className={styles.time}>{formatTime(state.duration)}</span>
           </div>
         </div>
-
-        <div className={styles.volumeSection}>
-          <input
-            type="range"
-            min="0"
-            max="1"
-            step="0.1"
-            value={state.volume}
-            onChange={(e) => {
-              dispatch({ type: 'SET_VOLUME', payload: parseFloat(e.target.value) });
-              if (audioRef.current) {
-                audioRef.current.volume = parseFloat(e.target.value);
-              }
-            }}
-            className={styles.volumeSlider}
-          />
-        </div>
-      </div>
+      )}
     </div>
   );
 };

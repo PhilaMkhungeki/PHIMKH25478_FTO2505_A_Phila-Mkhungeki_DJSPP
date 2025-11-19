@@ -29,6 +29,11 @@ export async function fetchPodcasts(setPodcasts, setError, setLoading) {
     if (!res.ok) throw new Error(`${res.status}`);
     const data = await res.json();
     
+    // Debug: Check the first podcast's genres
+    console.log('=== GENRE DEBUG ===');
+    console.log('First podcast genres from API:', data[0]?.genres);
+    console.log('Available genres in GENRE_MAPPING:', Object.keys(GENRE_MAPPING));
+
     // Transform the data to include genre titles and IDs for filtering
     const transformedData = data.map(preview => ({
       id: preview.id,
@@ -38,9 +43,13 @@ export async function fetchPodcasts(setPodcasts, setError, setLoading) {
       image: preview.image,
       genres: preview.genres.map(genreId => getGenreTitle(genreId)),
       updated: preview.updated,
-      genreIds: preview.genres // Keep original genre IDs for filtering
+      genreIds: preview.genres 
     }));
     
+    // Debug: Check the transformed genres
+    console.log('Transformed genres for first podcast:', transformedData[0]?.genres);
+    console.log('========================');
+
     setPodcasts(transformedData);
   } catch (err) {
     console.error("Failed to fetch podcasts:", err);

@@ -36,7 +36,6 @@ function AppContent() {
   return (
     <>
       <Header />
-      <ThemeToggle />
       
       <Routes>
         <Route path="/" element={

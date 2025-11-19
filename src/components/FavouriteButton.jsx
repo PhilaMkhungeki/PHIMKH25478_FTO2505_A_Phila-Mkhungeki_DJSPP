@@ -3,9 +3,22 @@ import { useFavourites } from '../context/FavouritesContext';
 import styles from './FavouriteButton.module.css';
 
 const FavouriteButton = ({ episode, showTitle, seasonTitle }) => {
-  const { addFavourite, removeFavourite, isFavourite } = useFavourites();
+  const { addFavourite, removeFavourite, isFavourite, favourites } = useFavourites();
 
-  const handleToggleFavourite = () => {
+  // Debug logging
+  console.log('=== FavouriteButton Debug ===');
+  console.log('Episode ID:', episode.id);
+  console.log('Episode Title:', episode.title);
+  console.log('Is favourite result:', isFavourite(episode.id));
+  console.log('All favourites:', favourites.map(f => ({ episodeId: f.episodeId, title: f.title })));
+  console.log('=============================');
+
+  const handleToggleFavourite = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    console.log('Toggling favourite for episode:', episode.id);
+
     const favouriteData = {
       episodeId: episode.id,
       title: episode.title,
@@ -19,12 +32,14 @@ const FavouriteButton = ({ episode, showTitle, seasonTitle }) => {
     };
 
     if (isFavourite(episode.id)) {
-      const favourites = JSON.parse(localStorage.getItem('podcast-favourites') || '[]');
+      console.log('Removing favourite');
       const favouriteToRemove = favourites.find(fav => fav.episodeId === episode.id);
+      console.log('Found favourite to remove:', favouriteToRemove);
       if (favouriteToRemove) {
         removeFavourite(favouriteToRemove.id);
       }
     } else {
+      console.log('Adding favourite');
       addFavourite(favouriteData);
     }
   };

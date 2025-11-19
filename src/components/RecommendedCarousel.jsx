@@ -9,7 +9,7 @@ const RecommendedCarousel = () => {
   const [recommendedShows, setRecommendedShows] = useState([]);
 
   useEffect(() => {
-    // Get random shows for recommendations
+    // Get random podcast shows for recommendations
     const shuffled = [...podcasts].sort(() => 0.5 - Math.random());
     setRecommendedShows(shuffled.slice(0, 10));
   }, [podcasts]);

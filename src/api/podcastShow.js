@@ -1,14 +1,14 @@
 import { getGenreTitle } from './fetchPodcasts';
 import { formatDate } from '../utils/formatDate';
-
+ 
 const API_BASE_URL = 'https://podcast-api.netlify.app';
 
-// Fetch specific show with full details
+// Fetch specific podcast with full details
 export const getShowDetail = async (showId) => {
   try {
     const response = await fetch(`${API_BASE_URL}/id/${showId}`);
     if (!response.ok) {
-      throw new Error('Failed to fetch show details');
+      throw new Error('Failed to fetch podcast details');
     }
     const showData = await response.json();
     console.log('Raw API response:', showData);
@@ -25,13 +25,19 @@ const transformShowData = (showData) => {
     throw new Error('No show data received');
   }
 
+  console.log('=== FULL SHOW DATA DEBUG ===');
+  console.log('Complete showData object:', showData);
+  console.log('ShowData genres:', showData.genres);
+  console.log('ShowData genres type:', typeof showData.genres);
+  console.log('ShowData genres length:', showData.genres?.length);
+
   return {
     id: showData.id,
     title: showData.title || 'Unknown title',
     description: showData.description || 'No description available.',
     image: showData.image,
 
-    genres: (showData.genres || []).map(genreId => getGenreTitle(genreId)),
+    genres: showData.genres || ['General'],
     genreIds: showData.genres || [],
 
     updated: showData.updated,
@@ -50,7 +56,9 @@ const transformShowData = (showData) => {
         duration: formatDuration(episode.duration),
         releaseDate: formatDate(episode.releaseDate),
         number: episode.number || 1,
-        seasonNumber: season.number || 1
+        seasonNumber: season.number || 1,
+        audioUrl: episode.audio || episode.audioUrl,
+        image: episode.image || season.image || showData.image
       }))
     }))
   };
