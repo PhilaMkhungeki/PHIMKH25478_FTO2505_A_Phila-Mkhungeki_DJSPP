@@ -136,7 +136,7 @@ const ShowDetail = () => {
           <div className={styles.seasonsHeader}>
             <h2>Current Season</h2>
 
-            <div className={styles.seasonDropdown}>
+           {/* <div className={styles.seasonDropdown}>
               <select
                 value={selectedSeason?.id || ''}
                 onChange={(e) => {
@@ -151,7 +151,47 @@ const ShowDetail = () => {
                   </option>
                 ))}
               </select>
+            </div> */}
+
+            {/*<div className={styles.seasonDropdown}>
+              <select
+                value={selectedSeason?.id || ''}
+                onChange={(e) => {
+                  const selectedId = e.target.value;
+                  const selected = show.seasons?.find(season => season.id?.toString() === selectedId);
+                  if (selected) {
+                    setSelectedSeason(selected);
+                  }
+                }}
+                className={styles.seasonSelect}
+              >
+                {show.seasons?.map(season => (
+                  <option key={season.id || season.title} value={season.id?.toString() || season.title}>
+                    {season.title}
+                  </option>
+                ))}
+              </select>
+            </div>*/}
+            <div className={styles.seasonDropdown}>
+              <select
+                value={selectedSeason?.title || ''}
+                onChange={(e) => {
+                  const selectedTitle = e.target.value;
+                  const selected = show.seasons?.find(season => season.title === selectedTitle);
+                  if (selected) {
+                    setSelectedSeason(selected);
+                  }
+                }}
+                className={styles.seasonSelect}
+              >
+                {show.seasons?.map(season => (
+                  <option key={season.title} value={season.title}>
+                    {season.title}
+                  </option>
+                ))}
+              </select>
             </div>
+
           </div>  
         </div>
 
@@ -171,26 +211,36 @@ const ShowDetail = () => {
             <div className={styles.episodesList}>
               {selectedSeason?.episodes?.map(episode => (
                 <div key={episode.id} className={styles.episodeCard}>
-                  <div className={styles.episodeActions}>
-                    <FavouriteButton 
-                      episode={episode}
-                      showTitle={show.title}
-                      seasonTitle={selectedSeason.title}
-                    />
-                    <button 
-                      onClick={() => handlePlayEpisode(episode)}
-                      className={styles.playButton}
-                      title="Play episode"
-                    >
-                      ▶ Play
-                    </button>
-                  </div>
                   <div className={styles.episodeContent}>
                     <div className={styles.episodeHeader}>
-                      <h4 className={styles.episodeTitle}>{episode.title}</h4>
-                      <span className={styles.episodeDuration}>{episode.duration} • {episode.releaseDate}</span>
+                      <div className={styles.episodeInfo}>
+                        <h4 className={styles.episodeTitle}>{episode.title}</h4>
+                        <div className={styles.episodeMeta}>
+                          <span className={styles.seasonEpisode}>
+                            Season {episode.seasonNumber} • Episode {episode.number}
+                          </span>
+                          <span className={styles.episodeDuration}>{episode.duration}</span>
+                        </div>
+                      </div>
+                      <div className={styles.episodeActions}>
+                        <FavouriteButton 
+                          episode={episode}
+                          showTitle={show.title}
+                          seasonTitle={selectedSeason.title}
+                        />
+                      </div>
                     </div>
                     <p className={styles.episodeDescription}>{episode.description}</p>
+                    <div className={styles.episodeBottomRow}>
+                      <span>{episode.releaseDate}</span>
+                      <button 
+                          onClick={() => handlePlayEpisode(episode)}
+                          className={styles.playButton}
+                          title="Play episode"
+                      >
+                          ▶ Play
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))}

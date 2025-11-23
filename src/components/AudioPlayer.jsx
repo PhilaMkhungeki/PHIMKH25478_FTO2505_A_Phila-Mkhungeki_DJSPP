@@ -33,6 +33,24 @@ const AudioPlayer = () => {
     dispatch({ type: state.isPlaying ? 'PAUSE' : 'PLAY' });
   };
 
+  const handleRewind = () => {
+    if (audioRef.current) {
+      audioRef.current.currentTime = Math.max(0, audioRef.current.currentTime - 15); // Rewind 15 seconds
+      dispatch({ type: 'SET_PROGRESS', payload: audioRef.current.currentTime });
+    }
+  };
+
+  const handleNext = () => {
+    // This will just restart the current track
+    if (audioRef.current) {
+      audioRef.current.currentTime = 0;
+      dispatch({ type: 'SET_PROGRESS', payload: 0 });
+      if (!state.isPlaying) {
+        dispatch({ type: 'PLAY' });
+      }
+    }
+  };
+
   const handleProgressChange = (e) => {
     const newProgress = parseFloat(e.target.value);
     dispatch({ type: 'SET_PROGRESS', payload: newProgress });
@@ -60,7 +78,6 @@ const AudioPlayer = () => {
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
-  // Always render the container, but conditionally show content
   return (
     <div className={`${styles.audioPlayer} ${!state.currentTrack ? styles.hidden : ''}`}>
       <audio
@@ -86,9 +103,19 @@ const AudioPlayer = () => {
           </div>
 
           <div className={styles.controls}>
-            <button onClick={handlePlayPause} className={styles.controlButton}>
-              {state.isPlaying ? '⏸️' : '▶️'}
-            </button>
+            
+
+            <div className={styles.playbackControls}>
+              <button onClick={handleRewind} className={styles.controlButton} title="Rewind 15 seconds">
+                ⏪
+              </button>
+              <button onClick={handlePlayPause} className={styles.playPauseButton}>
+                {state.isPlaying ? '⏸️' : '▶️'}
+              </button>
+              <button onClick={handleNext} className={styles.controlButton} title="Next track">
+                ⏩
+              </button>
+            </div>
             
             <div className={styles.progressSection}>
               <span className={styles.time}>{formatTime(state.progress)}</span>

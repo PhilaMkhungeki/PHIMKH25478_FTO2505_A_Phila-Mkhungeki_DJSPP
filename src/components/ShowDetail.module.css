@@ -225,11 +225,16 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
+.episodeContent {
+  width: 100%;
+}
+
 .episodeActions {
   display: flex;
   gap: 10px;
   align-items: center;
-  margin-bottom: 15px;
+  /*margin-bottom: 15px;*/
+  flex-shrink: 0;
 }
 
 .playButton {
@@ -243,6 +248,7 @@
   font-weight: 600;
   transition: all 0.2s ease;
   min-width: 80px;
+  white-space: nowrap;
 }
 
 .playButton:hover {
@@ -255,7 +261,12 @@
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 12px;
-  padding-right: 50px;
+  /*padding-right: 50px;*/
+  gap: 20px;
+}
+
+.episodeInfo {
+  flex: 1;
 }
 
 .episodeTitle {
@@ -263,14 +274,15 @@
   color: #1a1a1a;
   font-size: 1.1rem;
   font-weight: 600;
-  flex: 1;
+  /*flex: 1;*/
+  line-height: 1.4;
 }
 
 .episodeDuration {
   color: #666;
   font-size: 14px;
-  margin-left: 16px;
-  white-space: nowrap;
+  /*margin-left: 16px;
+  white-space: nowrap;*/
 }
 
 .episodeDescription {
@@ -280,7 +292,23 @@
   font-size: 14px;
 }
 
+.episodeMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
 
+.seasonEpisode {
+  color: #666;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.episodeBottomRow {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
 
 /* Loading and Error States */
 .loadingContainer,
@@ -332,6 +360,10 @@
     flex-direction: column;
     gap: 20px;
   }
+
+  .episodeCard {
+    padding: 20px;
+  }
   
   .episodeHeader {
     flex-direction: column;
@@ -340,6 +372,16 @@
   .episodeDuration {
     margin-left: 0;
     margin-top: 8px;
+  }
+
+  .episodeActions {
+    align-self: flex-end;
+  }
+
+  .episodeMeta {
+    flex-direction: row;
+    gap: 12px;
+    flex-wrap: wrap;
   }
   
   .seasonButtons {
