@@ -25,24 +25,11 @@ const transformShowData = (showData) => {
     throw new Error('No show data received');
   }
 
-  console.log('=== DEBUG EPISODE DATA ===');
-  if (showData.seasons?.[0]?.episodes?.[0]) {
-    const firstEpisode = showData.seasons[0].episodes[0];
-    console.log('First episode object:', firstEpisode);
-    console.log('Available keys:', Object.keys(firstEpisode));
-    console.log('Audio-related fields:');
-    console.log('- audio:', firstEpisode.audio);
-    console.log('- audioUrl:', firstEpisode.audioUrl);
-    console.log('- file:', firstEpisode.file);
-    console.log('- url:', firstEpisode.url);
-  }
-  console.log('========================');
-
 
   return {
     id: showData.id,
     title: showData.title || 'Unknown title',
-    description: showData.description || 'No desnpmcription available.',
+    description: showData.description || 'No description available.',
     image: showData.image,
 
     genres: showData.genres || ['General'],
@@ -57,17 +44,22 @@ const transformShowData = (showData) => {
       description: season.description || '',
       image: season.image || showData.image,
       year: season.year || new Date().getFullYear(),
-      episodes: (season.episodes || []).map(episode => ({
-        id: episode.id,
-        title: episode.title || 'Untitled Episode',
-        description: episode.description || 'No description available.',
-        duration: formatDuration(episode.duration),
-        releaseDate: 'Jan 15, 2025',
-        number: episode.episode || episode.number || 1,
-        seasonNumber: season.number || 1,
-        audioUrl: episode.audio || episode.audioUrl || episode.file || episode.url,
-        image: episode.image || season.image || showData.image
-      }))
+      episodes: (season.episodes || []).map(episode => {
+        console.log('Processing episode:', episode.title);
+        console.log('Raw duration value:', episode.duration);
+
+        return{
+          id: episode.id,
+          title: episode.title || 'Untitled Episode',
+          description: episode.description || 'No description available.',
+          duration: formatDuration(episode.duration),
+          releaseDate: 'Jan 15, 2025',
+          number: episode.episode || episode.number || 1,
+          seasonNumber: season.number || 1,
+          audioUrl: episode.audio || episode.audioUrl || episode.file || episode.url,
+          image: episode.image || season.image || showData.image
+        };
+      })
     }))
   };
 };
@@ -79,40 +71,22 @@ const transformShowData = (showData) => {
   return `${minutes} min`;
 };*/
 // Format duration from seconds to minutes - ROBUST VERSION
+// Format duration from seconds to minutes - FIXED VERSION
 const formatDuration = (seconds) => {
-  // Check for null, undefined, empty string, etc.
+  console.log('Duration value received:', seconds, 'Type:', typeof seconds);
+  
   if (!seconds && seconds !== 0) {
-    console.warn('formatDuration: Missing duration value');
     return 'Unknown duration';
   }
   
-  // Handle case where duration might already be in "mm:ss" or "X min" format
-  if (typeof seconds === 'string') {
-    if (seconds.includes(':') || seconds.includes('min')) {
-      return seconds; // Already formatted, return as-is
-    }
-  }
-  
-  // Convert to number
+  // Convert to number if it's a string
   const numSeconds = parseInt(seconds);
   
-  // Check if conversion resulted in a valid number
   if (isNaN(numSeconds)) {
-    console.warn('formatDuration: Invalid duration format:', seconds);
     return 'Unknown duration';
   }
   
-  // Handle zero or negative duration
-  if (numSeconds <= 0) {
-    return '0 min';
-  }
-  
+  // Convert seconds to minutes
   const minutes = Math.floor(numSeconds / 60);
-  const remainingSeconds = numSeconds % 60;
-  
-  // Format as "X min" for simplicity, or "X:XX" for more precision
-  if (remainingSeconds > 0) {
-    return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
-  }
   return `${minutes} min`;
 };

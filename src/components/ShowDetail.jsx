@@ -136,42 +136,6 @@ const ShowDetail = () => {
           <div className={styles.seasonsHeader}>
             <h2>Current Season</h2>
 
-           {/* <div className={styles.seasonDropdown}>
-              <select
-                value={selectedSeason?.id || ''}
-                onChange={(e) => {
-                  const selected = show.seasons?.find(season => season.id === e.target.value);
-                  if (selected) handleSeasonSelect(selected);
-                }}
-                className={styles.seasonSelect}
-              >
-                {show.seasons?.map(season => (
-                  <option key={season.id} value={season.id}>
-                    {season.title}
-                  </option>
-                ))}
-              </select>
-            </div> */}
-
-            {/*<div className={styles.seasonDropdown}>
-              <select
-                value={selectedSeason?.id || ''}
-                onChange={(e) => {
-                  const selectedId = e.target.value;
-                  const selected = show.seasons?.find(season => season.id?.toString() === selectedId);
-                  if (selected) {
-                    setSelectedSeason(selected);
-                  }
-                }}
-                className={styles.seasonSelect}
-              >
-                {show.seasons?.map(season => (
-                  <option key={season.id || season.title} value={season.id?.toString() || season.title}>
-                    {season.title}
-                  </option>
-                ))}
-              </select>
-            </div>*/}
             <div className={styles.seasonDropdown}>
               <select
                 value={selectedSeason?.title || ''}

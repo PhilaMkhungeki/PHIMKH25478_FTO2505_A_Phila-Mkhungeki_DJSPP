@@ -1,5 +1,5 @@
 .card {
-  background: white;
+  background: var(--bg-primary);
   padding: 1rem;
   border-radius: 8px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
@@ -38,11 +38,12 @@
   border-radius: 4px;
   display: inline-block;
   font-size: 0.8rem;
+  color: #1a1a1a;
 }
 
 .updatedText {
   font-size: 0.8rem;
-  color: var(--grey-text);
+  color: #1a1a1a;
 }
 
 .favouriteIndicator {
